@@ -6,11 +6,9 @@ require 'cgi'
 module Msgwow
   class Message
 
-    attr_accessor :message
-    attr_accessor :mobiles
-    attr_accessor :sender
-    attr_accessor :route
-    attr_accessor :response
+    attr_accessor :message, :mobiles, :sender, :route,
+                  :response, :flash, :schedule_time,
+                  :unicode, :campaign, :ignore_ndnc, :country
 
     SMS_ENDPOINT = URI.parse("http://my.msgwow.com/api/sendhttp.php?response=json")
 
@@ -73,13 +71,43 @@ module Msgwow
     end
 
     def route=(new_route)
-      @route = new_route if new_route
+      @route = new_route if new_route && [1,4].include?(new_route)
+    end
+
+    def flash=(flash_value)
+      if flash_value == true || flash_value.to_i == 1
+        @flash = '1'
+      else
+        @flash = false
+      end
+    end
+
+    def unicode=(unicode_value)
+      if unicode_value == true || unicode_value.to_i == 1
+        @unicode = '1'
+      else
+        @unicode = false
+      end
+    end
+
+    def country=(country_code)
+      @country = country_code if country_code.match(/\A\d+\z/)
+    end
+
+    def schedule_time=(date_time)
+      # No strict validation here, just the format
+      @schedule_time = date_time if date_time.match(/\A\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\z/)
+    end
+
+    def ignore_ndnc=(value)
+      if value == true || value.to_i == 1
+        @ignore_ndnc = '1'
+      end
     end
 
     def options=(options)
-      self.sender = options[:sender] if options.has_key?(:sender)
-      if options.has_key?(:route) and [1,4].include? options[:route]
-        self.route = options[:route]
+      [:sender, :route, :flash, :schedule_time, :unicode, :country, :campaign].each do |attr|
+        self.public_send("#{attr}=", options[attr]) if options.has_key?(attr)
       end
     end
 
@@ -111,6 +139,14 @@ module Msgwow
                 'route'   => route,
                 'sender'  => sender
                }
+      # Optional arguments
+      [:flash, :unicode, :country, :campaign].each do |attr|
+        attr_value = self.public_send(attr)
+        params[attr.to_s] = attr_value if attr_value
+      end
+      params['schtime'] = self.schedule_time unless self.schedule_time.nil?
+      params['ignoreNdnc'] = self.ignore_ndnc unless self.ignore_ndnc.nil?
+
       req.set_form_data(params)
       result = http.start { |http| http.request(req) }
       self.response = result

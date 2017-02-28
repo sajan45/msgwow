@@ -22,5 +22,16 @@ module Msgwow
       msg.send!
       msg
     end
+
+    def send_flash_message(message, numbers, options={})
+      options.merge!(flash: 1)
+      self.send_message(message, numbers, options)
+    end
+
+    def send_unicode_message(message, numbers, options={})
+      options.merge!(unicode: 1)
+      self.send_message(message, numbers, options)
+    end
+
   end
 end

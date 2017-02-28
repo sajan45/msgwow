@@ -66,7 +66,25 @@ But numbers like *987654321* (less than 10 digit) or *98765abcde* (containing no
 The third optional argument for `send_message` method is a Hash object.
 * **sender** : You can override sender by passing a `sender` option.
   `Msgwow.send_message('message', '9538xxxxxx', sender: 'MYAPPS')`
-
+* **route**  : **1** for promotional route and **4** for transactional route.
+  `Msgwow.send_message('message', '9538xxxxxx', sender: 'MYAPPS', route: 1)`
+* **country**: 0 for international,1 for USA, 91 for India (integer only).
+  `Msgwow.send_message('message', '9538xxxxxx', country: 1)`
+* **flash**  : **1** or **true** to send a flash message.
+  `Msgwow.send_message('message', '9538xxxxxx', flash: true)`
+  or you can send a flash message directly with `send_flash_message`  and it supports all other options.
+  `Msgwow.send_flash_message('message', '9538xxxxxx', sender: 'ALERT')`
+* **unicode**  : **1** or **true** to send a unicode message.
+  `Msgwow.send_message('message', '9538xxxxxx', unicode: true)`
+  or you can send a unicode message directly with `send_unicode_message`  with all other options.
+  `Msgwow.send_unicode_message('message', '9538xxxxxx', sender: 'ALERT')`
+* **ignore_ndnc** : **1** or **true** to make system, ignore all NDNC Numbers.
+  `Msgwow.send_message('message', '9538xxxxxx', ignore_ndnc: true)`
+* **campaign**    : Name of the campaign, you want to start.
+  `Msgwow.send_message('message', '9538xxxxxx', campaign: 'Christmas Offer')`
+* **schedule_time** : Date and Time of when you want to schedule the SMS to be sent.
+Time format will be Y-m-d H:M:S .
+  `Msgwow.send_message('message', '9538xxxxxx', schedule_time: '2017-02-28 18:24:00')`
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -79,8 +97,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/sajan4
 
 ## TODO
 
-* Support for more options like schedule time
-* Specs for features
+* Support for phonebook features.
+* Specs.
 
 ## License
 
