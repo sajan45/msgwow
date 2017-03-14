@@ -19,7 +19,7 @@ Configure the default settings
 Msgwow.config do |c|
   c.sender = "MYAPPS"   # Default sender id is MSGWOW
   c.route = 1           # Default route is 4, which is for Transactional SMS
-  c.api_hash = "msgwow hash"
+  c.authkey = "msgwow API key"
 end
 ```
 
